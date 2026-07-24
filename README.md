@@ -1,1 +1,1 @@
-# rynixtech.com
+# rynixtech
