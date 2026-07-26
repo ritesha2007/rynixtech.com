@@ -1,49 +1,66 @@
-document.addEventListener("mousemove", (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 20;
-    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+const scene = new THREE.Scene();
 
-    document.body.style.backgroundPosition = `${50 + x}% ${50 + y}%`;
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth / window.innerHeight,
+0.1,
+1000
+);
 
-    const logo = document.querySelector(".hero-logo");
-    if (logo) {
-        logo.style.transform = `translate(${x/4}px, ${y/4}px)`;
-    }
+camera.position.z = 5;
+
+const renderer = new THREE.WebGLRenderer({
+alpha: true,
+antialias: true
 });
 
-document.addEventListener("touchmove", (e) => {
-    const touch = e.touches[0];
-    const x = (touch.clientX / window.innerWidth - 0.5) * 20;
-    const y = (touch.clientY / window.innerHeight - 0.5) * 20;
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-    document.body.style.backgroundPosition = `${50 + x}% ${50 + y}%`;
+renderer.domElement.style.position = "fixed";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+renderer.domElement.style.zIndex = "-1";
 
-    const logo = document.querySelector(".hero-logo");
-    if (logo) {
-        logo.style.transform = `translate(${x/4}px, ${y/4}px)`;
-    }
-}, { passive: true });
+document.body.appendChild(renderer.domElement);
 
-window.addEventListener("scroll", () => {
-    const scroll = window.scrollY;
-    const hero = document.querySelector(".hero");
+// Stars
+const geometry = new THREE.BufferGeometry();
+const vertices = [];
 
-    if (hero) {
-        hero.style.transform = `translateY(${scroll * 0.15}px)`;
-    }
+for (let i = 0; i < 6000; i++) {
+    vertices.push(
+        (Math.random() - 0.5) * 250,
+        (Math.random() - 0.5) * 250,
+        (Math.random() - 0.5) * 250
+    );
+}
+
+geometry.setAttribute(
+'position',
+new THREE.Float32BufferAttribute(vertices, 3)
+);
+
+const material = new THREE.PointsMaterial({
+color: 0xffdd33,
+size: 0.35
 });
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-        }
-    });
-});
+const stars = new THREE.Points(geometry, material);
+scene.add(stars);
 
-document.querySelectorAll("section").forEach(section => {
-    section.style.opacity = "0";
-    section.style.transform = "translateY(50px)";
-    section.style.transition = "all 1s ease";
-    observer.observe(section);
+function animate() {
+requestAnimationFrame(animate);
+
+stars.rotation.y += 0.0007;
+stars.rotation.x += 0.0002;
+
+renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth, window.innerHeight);
 });
