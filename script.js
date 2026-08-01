@@ -1,4 +1,7 @@
-// Galaxy Animation Engine
+// ============================================
+// PART 1: REALISTIC BLACK HOLE WITH ACCRETION DISK
+// ============================================
+
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -10,231 +13,189 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-// Galaxy variables
-let galaxyX = canvas.width / 2;
-let galaxyY = canvas.height / 2;
-let rotation = 0;
-let time = 0;
-const blackHoleRadius = 50;
+// ============================================
+// BLACK HOLE VARIABLES
+// ============================================
+const blackHole = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 40,
+    rotation: 0,
+    mass: 1000
+};
 
-// Mouse/Touch tracking
+const accretionDisk = {
+    particles: [],
+    innerRadius: blackHole.radius + 20,
+    outerRadius: 300,
+    rotation: 0
+};
+
+const spacetime = {
+    waveOffset: 0
+};
+
+// ============================================
+// CREATE ACCRETION DISK PARTICLES
+// ============================================
+function createAccretionDiskParticles() {
+    accretionDisk.particles = [];
+    
+    // Create multiple rings of particles
+    for (let ring = 0; ring < 8; ring++) {
+        const ringRadius = accretionDisk.innerRadius + (ring * (accretionDisk.outerRadius - accretionDisk.innerRadius) / 8);
+        const particlesInRing = Math.max(20, Math.floor(40 + ring * 15));
+        
+        for (let i = 0; i < particlesInRing; i++) {
+            const angle = (i / particlesInRing) * Math.PI * 2 + Math.random() * 0.3;
+            const radiusVariance = ringRadius + (Math.random() - 0.5) * 15;
+            
+            accretionDisk.particles.push({
+                angle: angle,
+                radius: radiusVariance,
+                baseRadius: ringRadius,
+                velocity: Math.sqrt(blackHole.mass / radiusVariance) * 0.015,
+                brightness: 1 - (ring / 8),
+                size: 2 + (8 - ring) * 0.8,
+                heat: Math.random() * 0.5 + 0.5 + (ring / 8)
+            });
+        }
+    }
+}
+
+createAccretionDiskParticles();
+
+// ============================================
+// MOUSE/TOUCH INTERACTION
+// ============================================
 let mouseX = canvas.width / 2;
 let mouseY = canvas.height / 2;
-let isMouseMoving = false;
 
 document.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    isMouseMoving = true;
 });
 
 document.addEventListener("touchmove", (e) => {
     mouseX = e.touches[0].clientX;
     mouseY = e.touches[0].clientY;
-    isMouseMoving = true;
 });
 
-document.addEventListener("mouseleave", () => {
-    isMouseMoving = false;
-});
+// ============================================
+// ANIMATION LOOP - PART 1
+// ============================================
+let time = 0;
 
-// Create billions of stars
-const starCount = 8000;
-const stars = [];
-
-function createStars() {
-    stars.length = 0;
-    for (let i = 0; i < starCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 1000;
-        
-        stars.push({
-            x: galaxyX + Math.cos(angle) * distance,
-            y: galaxyY + Math.sin(angle) * distance,
-            r: Math.random() * 2,
-            opacity: 0.3 + Math.random() * 0.7,
-            angle: angle,
-            distance: distance,
-            twinkle: Math.random() * Math.PI * 2,
-            touchEffect: 0
-        });
-    }
-}
-
-createStars();
-
-// Animation loop
-function animate() {
-    // Clear canvas
+function animatePart1() {
+    // Deep space background
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Update galaxy center (slow drift)
-    galaxyX = canvas.width / 2 + Math.sin(time * 0.00005) * 30;
-    galaxyY = canvas.height / 2 + Math.cos(time * 0.00004) * 30;
-    
-    // Nebula glow
-    const nebula = ctx.createRadialGradient(galaxyX, galaxyY, 50, galaxyX, galaxyY, 500);
-    nebula.addColorStop(0, "rgba(255, 0, 150, 0.3)");
-    nebula.addColorStop(0.5, "rgba(0, 100, 255, 0.1)");
-    nebula.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.fillStyle = nebula;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw spiral galaxy arms
-    ctx.save();
-    ctx.translate(galaxyX, galaxyY);
-    ctx.rotate(rotation);
-    
-    for (let arm = 0; arm < 4; arm++) {
-        ctx.save();
-        ctx.rotate((Math.PI * 2 / 4) * arm);
-        
-        for (let i = 0; i < 400; i++) {
-            const angle = i * 0.04;
-            const radius = i * 0.6;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            
-            ctx.beginPath();
-            ctx.arc(x, y, 0.6, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(150, 50, 255, ${0.4 - (i / 400) * 0.4})`;
-            ctx.fill();
-        }
-        ctx.restore();
+    // Distant stars background
+    ctx.fillStyle = "#ffffff";
+    for (let i = 0; i < 200; i++) {
+        const x = (Math.sin(i * 12.5 + time * 0.00001) * canvas.width * 2) % canvas.width;
+        const y = (Math.cos(i * 8.7 + time * 0.00001) * canvas.height * 2) % canvas.height;
+        const brightness = Math.sin(i * 0.5 + time * 0.0001) * 0.3 + 0.5;
+        ctx.globalAlpha = brightness * 0.4;
+        ctx.fillRect(x, y, 0.5, 0.5);
     }
+    ctx.globalAlpha = 1;
     
-    // Black hole glow
-    const bhGlow = ctx.createRadialGradient(0, 0, 10, 0, 0, blackHoleRadius + 40);
-    bhGlow.addColorStop(0, "rgba(255, 150, 50, 1)");
-    bhGlow.addColorStop(0.6, "rgba(255, 50, 0, 0.4)");
-    bhGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.fillStyle = bhGlow;
-    ctx.beginPath();
-    ctx.arc(0, 0, blackHoleRadius + 40, 0, Math.PI * 2);
-    ctx.fill();
+    // Event horizon shadow
+    const horizonGradient = ctx.createRadialGradient(blackHole.x, blackHole.y, 0, blackHole.x, blackHole.y, blackHole.radius * 1.3);
+    horizonGradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+    horizonGradient.addColorStop(0.7, "rgba(0, 0, 20, 0.8)");
+    horizonGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = horizonGradient;
+    ctx.fillRect(blackHole.x - blackHole.radius * 1.5, blackHole.y - blackHole.radius * 1.5, 
+                 blackHole.radius * 3, blackHole.radius * 3);
     
-    // Accretion disk
-    for (let i = 0; i < 25; i++) {
-        const diskAngle = rotation * 3 + i * 0.25;
-        const diskRadius = blackHoleRadius + 20 + i * 3;
-        const px = Math.cos(diskAngle) * diskRadius;
-        const py = Math.sin(diskAngle) * diskRadius;
+    // Update and draw accretion disk particles
+    for (let particle of accretionDisk.particles) {
+        // Orbital velocity creates rotation
+        particle.angle += particle.velocity;
         
-        ctx.beginPath();
-        ctx.arc(px, py, 3 + i * 0.3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 200, 50, ${0.7 - i * 0.02})`;
-        ctx.fill();
-    }
-    
-    // Black hole center
-    ctx.beginPath();
-    ctx.arc(0, 0, blackHoleRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "#000000";
-    ctx.fill();
-    
-    ctx.restore();
-    
-    // Draw stars
-    for (let star of stars) {
-        // Twinkling
-        star.twinkle += 0.03;
-        const twinkle = Math.abs(Math.sin(star.twinkle)) * 0.6 + 0.4;
+        // Slight spiral inward
+        particle.radius *= 0.9999;
         
-        // Mouse repel
-        if (isMouseMoving) {
-            const dx = star.x - mouseX;
-            const dy = star.y - mouseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            if (dist < 250) {
-                const force = (250 - dist) / 250 * 15;
-                const angle = Math.atan2(dy, dx);
-                star.x += Math.cos(angle) * force;
-                star.y += Math.sin(angle) * force;
-                star.touchEffect = force;
-            }
+        // Reset if too close
+        if (particle.radius < accretionDisk.innerRadius * 1.1) {
+            particle.radius = accretionDisk.outerRadius;
         }
         
-        // Orbit around galaxy
-        const angleToGalaxy = Math.atan2(star.y - galaxyY, star.x - galaxyX);
-        const distToGalaxy = Math.sqrt(Math.pow(star.x - galaxyX, 2) + Math.pow(star.y - galaxyY, 2));
+        // Calculate position
+        const x = blackHole.x + Math.cos(particle.angle) * particle.radius;
+        const y = blackHole.y + Math.sin(particle.angle) * particle.radius;
         
-        const newAngle = angleToGalaxy + rotation * 0.25 + (distToGalaxy / 1000) * 0.02;
-        const newDist = distToGalaxy * (1 - 0.0001);
+        // Heat color: yellow -> orange -> red
+        let hue;
+        if (particle.heat > 0.7) {
+            hue = "rgba(255, 200, 0, 0.8)"; // Yellow
+        } else if (particle.heat > 0.4) {
+            hue = "rgba(255, 100, 0, 0.7)"; // Orange
+        } else {
+            hue = "rgba(255, 50, 0, 0.5)"; // Red
+        }
         
-        star.x = galaxyX + Math.cos(newAngle) * newDist;
-        star.y = galaxyY + Math.sin(newAngle) * newDist;
-        
-        // Wrap around
-        if (star.x < -100) star.x = canvas.width + 100;
-        if (star.x > canvas.width + 100) star.x = -100;
-        if (star.y < -100) star.y = canvas.height + 100;
-        if (star.y > canvas.height + 100) star.y = -100;
-        
-        // Draw star with glow
+        // Draw particle
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity * twinkle})`;
+        ctx.arc(x, y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = hue;
         ctx.fill();
         
         // Glow effect
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(100, 200, 255, ${star.opacity * twinkle * 0.3})`;
-        ctx.fill();
+        ctx.arc(x, y, particle.size * 2, 0, Math.PI * 2);
+        ctx.strokeStyle = hue.replace("0.8", "0.3").replace("0.7", "0.2").replace("0.5", "0.1");
+        ctx.lineWidth = 1;
+        ctx.stroke();
     }
     
-    // Background distant stars
-    for (let i = 0; i < 300; i++) {
-        const x = (Math.sin(time * 0.00001 + i * 12.5) * canvas.width * 2) % canvas.width;
-        const y = (Math.cos(time * 0.00001 + i * 8.7) * canvas.height * 2) % canvas.height;
-        const size = (Math.sin(i * 0.123) * 0.5 + 0.5) * 0.3;
+    // Accretion disk dust lanes (darker bands)
+    for (let ring = 0; ring < 6; ring++) {
+        const ringRadius = accretionDisk.innerRadius + (ring * (accretionDisk.outerRadius - accretionDisk.innerRadius) / 6);
+        const angle = accretionDisk.rotation + ring * 0.3;
         
+        ctx.save();
+        ctx.globalAlpha = 0.15;
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-        ctx.fill();
+        ctx.arc(blackHole.x, blackHole.y, ringRadius, angle, angle + Math.PI * 0.8);
+        ctx.stroke();
+        ctx.restore();
     }
     
-    rotation += 0.001;
+    // Intense glow around black hole
+    const coreGlow = ctx.createRadialGradient(blackHole.x, blackHole.y, blackHole.radius, 
+                                             blackHole.x, blackHole.y, blackHole.radius * 2.5);
+    coreGlow.addColorStop(0, "rgba(255, 150, 50, 0.6)");
+    coreGlow.addColorStop(0.5, "rgba(255, 50, 0, 0.3)");
+    coreGlow.addColorStop(1, "rgba(255, 0, 0, 0)");
+    ctx.fillStyle = coreGlow;
+    ctx.fillRect(blackHole.x - blackHole.radius * 3, blackHole.y - blackHole.radius * 3,
+                 blackHole.radius * 6, blackHole.radius * 6);
+    
+    // Event horizon circle
+    ctx.beginPath();
+    ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255, 100, 0, 0.8)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Black hole center
+    ctx.beginPath();
+    ctx.arc(blackHole.x, blackHole.y, blackHole.radius * 0.7, 0, Math.PI * 2);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    
+    // Rotation update
+    accretionDisk.rotation += 0.003;
+    blackHole.rotation += 0.001;
     time++;
     
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animatePart1);
 }
 
-animate();
-
-// Touch ripple effect
-function createTouchRipple(x, y) {
-    const ripple = document.createElement("div");
-    ripple.style.cssText = `
-        position: fixed;
-        left: ${x}px;
-        top: ${y}px;
-        width: 15px;
-        height: 15px;
-        border: 2px solid rgba(255, 150, 50, 0.9);
-        border-radius: 50%;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 999;
-    `;
-    document.body.appendChild(ripple);
-    
-    let size = 15;
-    const interval = setInterval(() => {
-        size += 12;
-        ripple.style.width = size + "px";
-        ripple.style.height = size + "px";
-        ripple.style.opacity = 1 - (size / 250);
-        
-        if (size > 250) {
-            clearInterval(interval);
-            ripple.remove();
-        }
-    }, 15);
-}
-
-canvas.addEventListener("click", (e) => createTouchRipple(e.clientX, e.clientY));
-canvas.addEventListener("touchstart", (e) => createTouchRipple(e.touches[0].clientX, e.touches[0].clientY));
+animatePart1();
