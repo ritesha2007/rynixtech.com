@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rynix Tech</title>
+<title>Rynix Tech - Galaxy Animation</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-scroll-behavior:smooth;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    scroll-behavior: smooth;
 }
 
-body{
-background:#050505;
-color:white;
-overflow-x:hidden;
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    color: white;
+    overflow-x: hidden;
 }
 
 #stars {
@@ -30,130 +32,177 @@ overflow-x:hidden;
     display: block;
 }
 
-header{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:20px 8%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-z-index:1000;
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.logo{
-font-size:28px;
-font-weight:bold;
-color:#FFD700;
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #FFD700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-nav a{
-color:white;
-text-decoration:none;
-margin-left:25px;
-transition:.3s;
+.logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
 }
 
-nav a:hover{
-color:#FFD700;
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    transition: 0.3s;
 }
 
-.hero{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-background: transparent;
+nav a:hover {
+    color: #FFD700;
+    text-shadow: 0 0 10px #FFD700;
 }
 
-.hero img{
-width:180px;
-border-radius:50%;
-box-shadow:0 0 40px gold;
-margin-bottom:30px;
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
 }
 
-.hero h1{
-font-size:60px;
-color:#FFD700;
+.hero img {
+    width: 180px;
+    border-radius: 50%;
+    box-shadow: 0 0 40px gold;
+    margin-bottom: 30px;
+    animation: float 3s ease-in-out infinite;
 }
 
-.hero p{
-max-width:700px;
-margin:20px auto;
-font-size:20px;
-color:#ddd;
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
 }
 
-.button{
-display:inline-block;
-padding:15px 35px;
-margin-top:25px;
-background:#FFD700;
-color:black;
-text-decoration:none;
-font-weight:bold;
-border-radius:40px;
-transition: 0.3s;
+.hero h1 {
+    font-size: 60px;
+    color: #FFD700;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.hero p {
+    max-width: 700px;
+    margin: 20px auto;
+    font-size: 20px;
+    color: #ddd;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 35px;
+    margin-top: 25px;
+    background: #FFD700;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 40px;
+    transition: 0.3s;
+    cursor: pointer;
+    border: none;
 }
 
 .button:hover {
-transform: scale(1.05);
-box-shadow: 0 0 20px gold;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px gold;
 }
 
-section{
-padding:100px 8%;
-text-align:center;
-position:relative;
-z-index:10;
+section {
+    padding: 100px 8%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.8);
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:30px;
-margin-top:40px;
+section h2 {
+    font-size: 48px;
+    color: #FFD700;
+    margin-bottom: 40px;
 }
 
-.card{
-background:#111;
-padding:30px;
-border-radius:20px;
-border:1px solid #FFD70033;
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
 }
 
-footer{
-padding:30px;
-text-align:center;
-background:#111;
-color:#aaa;
-position:relative;
-z-index:10;
+.card {
+    background: rgba(17, 17, 17, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #FFD70033;
+    transition: 0.3s;
 }
 
-@media(max-width:700px){
-
-.hero h1{
-font-size:38px;
+.card:hover {
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    transform: translateY(-10px);
 }
 
-.hero img{
-width:130px;
+.card h3 {
+    color: #FFD700;
+    margin-bottom: 15px;
 }
 
-nav{
-display:none;
+footer {
+    padding: 30px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.9);
+    color: #aaa;
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-}
+@media(max-width:700px) {
+    .hero h1 {
+        font-size: 38px;
+    }
 
+    .hero img {
+        width: 130px;
+    }
+
+    nav {
+        display: none;
+    }
+
+    header {
+        padding: 15px 5%;
+    }
+
+    section {
+        padding: 60px 5%;
+    }
+}
 </style>
 
 </head>
@@ -163,107 +212,64 @@ display:none;
 <canvas id="stars"></canvas>
 
 <header>
+    <div class="logo">
+        <img src="IMG-20260716-WA0025.jpg" alt="Rynix Tech Logo">
+        <span>RYNIX TECH</span>
+    </div>
 
-<div class="logo">
-<img src="IMG-20260716-WA0025.jpg" width="45" height="45" style="border-radius:50%;vertical-align:middle;margin-right:10px;">
-<span>RYNIX TECH</span>
-</div>
-
-<nav>
-<a href="#home">Home</a>
-<a href="#about">About</a>
-<a href="#services">Services</a>
-<a href="#contact">Contact</a>
-</nav>
-
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
 </header>
 
 <section class="hero" id="home"> 
-<img src="IMG-20260716-WA0025.jpg" class="hero-logo" alt="Rynix Tech Logo">
-
-<h1>Welcome to Rynix Tech</h1>
-
-<p>
-Building the Future with Technology, Artificial Intelligence, Space Research and Innovation.
-</p>
-
-<a href="#about" class="button">Explore</a>
-
+    <img src="IMG-20260716-WA0025.jpg" alt="Rynix Tech Logo">
+    <h1>Welcome to Rynix Tech</h1>
+    <p>Building the Future with Technology, Artificial Intelligence, Space Research and Innovation.</p>
+    <a href="#about" class="button">Explore</a>
 </section>
 
 <section id="about">
-
-<h2>About Us</h2>
-
-<br>
-
-<p>
-
-Rynix Tech is a futuristic technology brand focused on AI, software, space exploration, cybersecurity and innovative digital products.
-
-</p>
-
+    <h2>About Us</h2>
+    <p>Rynix Tech is a futuristic technology brand focused on AI, software, space exploration, cybersecurity and innovative digital products.</p>
 </section>
 
 <section id="services">
-
-<h2>Services</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Website Development</h3>
-
-<p>Modern responsive websites.</p>
-
-</div>
-
-<div class="card">
-
-<h3>Artificial Intelligence</h3>
-
-<p>Next-generation AI solutions.</p>
-
-</div>
-
-<div class="card">
-
-<h3>Space Technology</h3>
-
-<p>Future science and innovation.</p>
-
-</div>
-
-</div>
-
+    <h2>Services</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>🌐 Website Development</h3>
+            <p>Modern responsive websites with cutting-edge design.</p>
+        </div>
+        <div class="card">
+            <h3>🤖 Artificial Intelligence</h3>
+            <p>Next-generation AI solutions for your business.</p>
+        </div>
+        <div class="card">
+            <h3>🚀 Space Technology</h3>
+            <p>Future science and innovation at the edge of technology.</p>
+        </div>
+    </div>
 </section>
 
 <section id="contact">
-
-<h2>Contact</h2>
-
-<br>
-
-<p>Email</p>
-
-<p>
-
-<a href="mailto:rynixtechgroup@gmail.com" style="color:gold;text-decoration:none;">
-rynixtechgroup@gmail.com
-</a>
-
-</p>
-
+    <h2>Contact</h2>
+    <p>Get in touch with us</p>
+    <p style="margin-top: 20px;">
+        <a href="mailto:rynixtechgroup@gmail.com" style="color: #FFD700; text-decoration: none; font-size: 18px;">
+            📧 rynixtechgroup@gmail.com
+        </a>
+    </p>
 </section>
 
 <footer>
-
-© 2026 Rynix Tech • All Rights Reserved
-
+    © 2026 Rynix Tech • All Rights Reserved
 </footer>
 
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 
 </body>
 </html>
