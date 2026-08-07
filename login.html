@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rynix Tech - Login</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#000;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    width:340px;
+    padding:30px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(15px);
+    border-radius:20px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    outline:none;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:#FFD700;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.google{
+    background:#fff;
+    color:#000;
+}
+
+a{
+    color:#FFD700;
+    text-decoration:none;
+}
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<h1>Rynix Tech</h1>
+<h3>Login</h3>
+
+<input id="email" type="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="loginUser()">Login</button>
+
+<button class="google" onclick="googleUser()">Continue with Google</button>
+
+<p><a href="#" onclick="forgotPassword()">Forgot Password?</a></p>
+
+<p>
+Don't have an account?
+<a href="signup.html">Create Account</a>
+</p>
+
+</div>
+
+<script type="module">
+
+import "./firebase.js";
+import "./auth.js";
+
+window.loginUser=()=>{
+login(
+document.getElementById("email").value,
+document.getElementById("password").value
+);
+}
+
+window.googleUser=()=>{
+googleLogin();
+}
+
+window.forgotPassword=()=>{
+const email=document.getElementById("email").value;
+
+if(email===""){
+alert("Enter your email first.");
+return;
+}
+
+resetPassword(email);
+}
+
+</script>
+
+</body>
+</html>
