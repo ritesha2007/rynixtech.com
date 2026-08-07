@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rynix Tech - Sign Up</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#000;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    width:340px;
+    padding:30px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(15px);
+    border-radius:20px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:#FFD700;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+a{
+    color:#FFD700;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Rynix Tech</h1>
+<h3>Create Account</h3>
+
+<input id="email" type="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="signupUser()">Create Account</button>
+
+<p>
+Already have an account?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+
+<script type="module">
+
+import "./firebase.js";
+import "./auth.js";
+
+window.signupUser=function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+signup(email,password);
+
+}
+
+</script>
+
+</body>
+</html>
