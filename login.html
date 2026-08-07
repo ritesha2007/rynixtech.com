@@ -33,7 +33,7 @@ input{
     border:none;
     border-radius:10px;
     outline:none;
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 button{
@@ -46,20 +46,32 @@ button{
     color:#000;
     font-weight:bold;
     cursor:pointer;
+    transition: 0.3s;
 }
 
-.google{
-    background:#fff;
-    color:#000;
+button:hover{
+    transform: scale(1.02);
+    box-shadow: 0 0 10px #FFD700;
+}
+
+button:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 a{
     color:#FFD700;
     text-decoration:none;
 }
-</style>
 
+.message{
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="box">
@@ -71,44 +83,75 @@ a{
 
 <input id="password" type="password" placeholder="Password">
 
-<button onclick="loginUser()">Login</button>
+<button id="loginBtn" onclick="loginUser()">Login</button>
 
-<button class="google" onclick="googleUser()">Continue with Google</button>
-
-<p><a href="#" onclick="forgotPassword()">Forgot Password?</a></p>
+<div class="message" id="message"></div>
 
 <p>
 Don't have an account?
-<a href="signup.html">Create Account</a>
+<a href="index.html">Go Back</a> | <a href="signup.html">Sign Up</a>
+</p>
+
+<p>
+<a href="#" onclick="resetPass()">Forgot Password?</a>
 </p>
 
 </div>
 
 <script type="module">
 
-import "./firebase.js";
-import "./auth.js";
+import { auth } from "./firebase.js";
 
-window.loginUser=()=>{
-login(
-document.getElementById("email").value,
-document.getElementById("password").value
-);
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+window.loginUser = async function(){
+  
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("loginBtn");
+  const messageDiv = document.getElementById("message");
+
+  if (!email || !password) {
+    messageDiv.style.color = "red";
+    messageDiv.textContent = "Please fill in all fields";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Logging in...";
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    
+    messageDiv.style.color = "green";
+    messageDiv.textContent = "Login successful! Redirecting...";
+    
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    messageDiv.style.color = "red";
+    messageDiv.textContent = error.message;
+    btn.disabled = false;
+    btn.textContent = "Login";
+  }
 }
 
-window.googleUser=()=>{
-googleLogin();
-}
-
-window.forgotPassword=()=>{
-const email=document.getElementById("email").value;
-
-if(email===""){
-alert("Enter your email first.");
-return;
-}
-
-resetPassword(email);
+window.resetPass = function(){
+  const email = prompt("Enter your email:");
+  if (email) {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Password reset email sent!");
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+  }
 }
 
 </script>
