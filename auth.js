@@ -17,7 +17,16 @@ import {
 // Signup
 window.signup = function(email, password) {
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
+    .then(async (userCredential) => {
+
+    const user = userCredential.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        role: "user",
+        createdAt: new Date()
+    });
+
       alert("Account created successfully!");
       window.location.href = "dashboard.html";
     })
