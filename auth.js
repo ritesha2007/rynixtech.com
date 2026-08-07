@@ -9,6 +9,11 @@ import {
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
+import {
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
 // Signup
 window.signup = function(email, password) {
   createUserWithEmailAndPassword(auth, email, password)
