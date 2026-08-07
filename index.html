@@ -62,16 +62,57 @@ header {
     border-radius: 50%;
 }
 
+.nav-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
 nav a {
     color: white;
     text-decoration: none;
-    margin-left: 25px;
     transition: 0.3s;
 }
 
 nav a:hover {
     color: #FFD700;
     text-shadow: 0 0 10px #FFD700;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.auth-buttons a {
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.login-btn {
+    color: #FFD700;
+    border: 2px solid #FFD700;
+}
+
+.login-btn:hover {
+    background: #FFD700;
+    color: black;
+    box-shadow: 0 0 10px #FFD700;
+}
+
+.signup-btn {
+    background: #FFD700;
+    color: black;
+    border: 2px solid #FFD700;
+}
+
+.signup-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #FFD700;
 }
 
 .hero {
@@ -191,12 +232,26 @@ footer {
         width: 130px;
     }
 
-    nav {
-        display: none;
+    .nav-wrapper {
+        flex-direction: column;
+        gap: 15px;
     }
 
     header {
         padding: 15px 5%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .auth-buttons {
+        width: 100%;
+        justify-content: center;
     }
 
     section {
@@ -217,12 +272,18 @@ footer {
         <span>RYNIX TECH</span>
     </div>
 
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#contact">Contact</a>
-    </nav>
+    <div class="nav-wrapper">
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="auth-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="signup.html" class="signup-btn">Sign Up</a>
+        </div>
+    </div>
 </header>
 
 <section class="hero" id="home"> 
