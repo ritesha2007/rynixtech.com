@@ -33,6 +33,7 @@ input{
     border:none;
     border-radius:10px;
     outline:none;
+    box-sizing: border-box;
 }
 
 button{
@@ -45,11 +46,28 @@ button{
     color:#000;
     font-weight:bold;
     cursor:pointer;
+    transition: 0.3s;
+}
+
+button:hover{
+    transform: scale(1.02);
+    box-shadow: 0 0 10px #FFD700;
+}
+
+button:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 a{
     color:#FFD700;
     text-decoration:none;
+}
+
+.message{
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
 }
 </style>
 </head>
@@ -65,27 +83,69 @@ a{
 
 <input id="password" type="password" placeholder="Password">
 
-<button onclick="signupUser()">Create Account</button>
+<button id="signupBtn" onclick="signupUser()">Create Account</button>
+
+<div class="message" id="message"></div>
 
 <p>
 Already have an account?
-<a href="login.html">Login</a>
+<a href="index.html">Go Back</a> | <a href="login.html">Login</a>
 </p>
 
 </div>
 
 <script type="module">
 
-import "./firebase.js";
-import "./auth.js";
+import { auth, db } from "./firebase.js";
 
-window.signupUser=function(){
+import {
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+import {
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-signup(email,password);
+window.signupUser = async function(){
+  
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("signupBtn");
+  const messageDiv = document.getElementById("message");
 
+  if (!email || !password) {
+    messageDiv.style.color = "red";
+    messageDiv.textContent = "Please fill in all fields";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Creating...";
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      role: "user",
+      createdAt: new Date()
+    });
+
+    messageDiv.style.color = "green";
+    messageDiv.textContent = "Account created successfully! Redirecting...";
+    
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
+
+  } catch (error) {
+    messageDiv.style.color = "red";
+    messageDiv.textContent = error.message;
+    btn.disabled = false;
+    btn.textContent = "Create Account";
+  }
 }
 
 </script>
