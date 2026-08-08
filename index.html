@@ -22,13 +22,34 @@ html, body {
     overflow-x: hidden;
 }
 
+/* Rotating galaxy background image */
+#galaxy {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image: url('galaxy.jpg');
+    background-size: cover;
+    background-position: center;
+    transform-origin: 50% 50%;
+    animation: galaxy-rotate 120s linear infinite;
+    filter: contrast(1.05) saturate(1.1) brightness(0.7);
+}
+
+@keyframes galaxy-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 #stars {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 2; /* canvas above galaxy image */
     display: block;
 }
 
@@ -41,10 +62,10 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
 }
 
 .logo {
@@ -178,7 +199,7 @@ section {
     text-align: center;
     position: relative;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 section h2 {
@@ -224,39 +245,13 @@ footer {
 }
 
 @media(max-width:700px) {
-    .hero h1 {
-        font-size: 38px;
-    }
-
-    .hero img {
-        width: 130px;
-    }
-
-    .nav-wrapper {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    header {
-        padding: 15px 5%;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    nav {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .auth-buttons {
-        width: 100%;
-        justify-content: center;
-    }
-
-    section {
-        padding: 60px 5%;
-    }
+    .hero h1 { font-size: 38px; }
+    .hero img { width: 130px; }
+    .nav-wrapper { flex-direction: column; gap: 15px; }
+    header { padding: 15px 5%; flex-direction: column; gap: 15px; }
+    nav { display: flex; flex-direction: column; gap: 10px; }
+    .auth-buttons { width: 100%; justify-content: center; }
+    section { padding: 60px 5%; }
 }
 </style>
 
@@ -264,6 +259,7 @@ footer {
 
 <body>
 
+<div id="galaxy"></div>
 <canvas id="stars"></canvas>
 
 <header>
