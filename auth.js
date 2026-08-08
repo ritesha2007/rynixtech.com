@@ -11,7 +11,8 @@ import {
 
 import {
   doc,
-  setDoc
+  setDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 // Signup
@@ -24,8 +25,8 @@ window.signup = function(email, password) {
     await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         role: "user",
-        createdAt: new Date()
-    });
+        createdAt: serverTimestamp()
+    }, { merge: true });
 
       alert("Account created successfully!");
       window.location.href = "dashboard.html";
@@ -47,17 +48,30 @@ window.login = function(email, password) {
     });
 };
 
-// Google Login
-window.googleLogin = function() {
+// Google Login / Signup
+window.googleLogin = async function() {
   const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-  signInWithPopup(auth, provider)
-    .then(() => {
-      window.location.href = "dashboard.html";
-    })
-    .catch(error => {
-      alert(error.message);
-    });
+    // Ensure user doc exists / merge
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      role: "user",
+      createdAt: serverTimestamp()
+    }, { merge: true });
+
+    // Redirect based on verification (Google accounts are usually verified)
+    if (user.emailVerified) {
+      window.location.replace("dashboard.html");
+    } else {
+      window.location.replace("verify.html");
+    }
+
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
 // Logout
