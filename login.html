@@ -49,6 +49,8 @@ button{
     transition: 0.3s;
 }
 
+.google-btn{ background:#4285F4; color:#fff; margin-top:12px }
+
 button:hover{
     transform: scale(1.02);
     box-shadow: 0 0 10px #FFD700;
@@ -85,6 +87,9 @@ a{
 
 <button id="loginBtn" onclick="loginUser()">Login</button>
 
+<!-- Google Sign-in -->
+<button id="googleBtn" class="google-btn" onclick="googleLogin()">Continue with Google</button>
+
 <div class="message" id="message"></div>
 
 <p>
@@ -109,7 +114,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-// Redirect if already signed in and verified
+// Redirect if already signed in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     if (user.emailVerified) {
@@ -150,7 +155,6 @@ window.loginUser = async function(){
     } else {
       messageDiv.style.color = "orange";
       messageDiv.textContent = "Email not verified. Redirecting to verification page...";
-      // Send to verification page where they can resend/confirm
       window.location.replace("verify.html");
     }
 
