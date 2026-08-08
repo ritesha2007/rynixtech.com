@@ -99,13 +99,25 @@ Already have an account?
 import { auth, db } from "./firebase.js";
 
 import {
-  createUserWithEmailAndPassword
+  setPersistence,
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
   doc,
-  setDoc
+  setDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+// Redirect if already signed in
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log('Already signed in, redirecting to dashboard');
+    window.location.replace('dashboard.html');
+  }
+});
 
 window.signupUser = async function(){
   
@@ -124,23 +136,27 @@ window.signupUser = async function(){
   btn.textContent = "Creating...";
 
   try {
+    // Persist the session
+    await setPersistence(auth, browserLocalPersistence);
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Save user document in Firestore using server timestamp
     await setDoc(doc(db, "users", user.uid), {
       email: user.email,
       role: "user",
-      createdAt: new Date()
+      createdAt: serverTimestamp()
     });
 
     messageDiv.style.color = "green";
     messageDiv.textContent = "Account created successfully! Redirecting...";
     
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1500);
+    // redirect immediately
+    window.location.replace("dashboard.html");
 
   } catch (error) {
+    console.error('Signup error:', error);
     messageDiv.style.color = "red";
     messageDiv.textContent = error.message;
     btn.disabled = false;
