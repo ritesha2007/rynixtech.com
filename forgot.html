@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rynix Tech - Forgot Password</title>
+<style>
+  body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh}
+  .box{background:rgba(255,255,255,.05);padding:22px;border-radius:12px;text-align:center;width:340px}
+  input{width:100%;padding:12px;margin:10px 0;border-radius:10px;border:none;box-sizing:border-box}
+  button{background:#FFD700;border:none;padding:12px 16px;border-radius:10px;cursor:pointer;font-weight:bold}
+  .message{min-height:20px;margin-top:10px;color:#ddd}
+  a{color:#FFD700}
+</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Reset your password</h2>
+    <p>Enter the email address for your account and we'll send a reset link.</p>
+
+    <input id="email" type="email" placeholder="Email address" />
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="sendBtn">Send reset email</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <p style="margin-top:12px"><a href="login.html">Back to login</a></p>
+  </div>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+const emailInput = document.getElementById('email');
+const sendBtn = document.getElementById('sendBtn');
+const messageDiv = document.getElementById('message');
+
+sendBtn.addEventListener('click', async () => {
+  const email = (emailInput.value || '').trim();
+  if (!email) { messageDiv.style.color='red'; messageDiv.textContent='Please enter your email.'; return; }
+  sendBtn.disabled = true; sendBtn.textContent = 'Sending...'; messageDiv.style.color='#ddd'; messageDiv.textContent='';
+  try {
+    await sendPasswordResetEmail(auth, email);
+    messageDiv.style.color = 'green';
+    messageDiv.textContent = 'Password reset email sent. Check your inbox (or spam).';
+    setTimeout(() => { window.location.replace('login.html'); }, 3000);
+  } catch (err) {
+    console.error('reset error', err);
+    messageDiv.style.color = 'red';
+    messageDiv.textContent = err?.message || 'Failed to send reset email.';
+    sendBtn.disabled = false; sendBtn.textContent = 'Send reset email';
+  }
+});
+</script>
+</body>
+</html>
