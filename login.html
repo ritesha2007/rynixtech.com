@@ -110,11 +110,16 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-// Redirect if already signed in
+// Redirect if already signed in and verified
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log('Already signed in, redirecting to dashboard');
-    window.location.replace('dashboard.html');
+    if (user.emailVerified) {
+      console.log('Already signed in & verified — redirecting to dashboard');
+      window.location.replace('dashboard.html');
+    } else {
+      console.log('Already signed in but not verified — redirecting to verify');
+      window.location.replace('verify.html');
+    }
   }
 });
 
@@ -137,12 +142,18 @@ window.loginUser = async function(){
   try {
     await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    
-    messageDiv.style.color = "green";
-    messageDiv.textContent = "Login successful! Redirecting...";
-    
-    // redirect immediately
-    window.location.replace("dashboard.html");
+    const user = userCredential.user;
+
+    if (user.emailVerified) {
+      messageDiv.style.color = "green";
+      messageDiv.textContent = "Login successful! Redirecting...";
+      window.location.replace("dashboard.html");
+    } else {
+      messageDiv.style.color = "orange";
+      messageDiv.textContent = "Email not verified. Redirecting to verification page...";
+      // Send to verification page where they can resend/confirm
+      window.location.replace("verify.html");
+    }
 
   } catch (error) {
     console.error('Login error:', error);
