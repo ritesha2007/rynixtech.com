@@ -93,7 +93,7 @@ Don't have an account?
 </p>
 
 <p>
-<a href="#" onclick="resetPass()">Forgot Password?</a>
+<a href="forgot.html">Forgot Password?</a>
 </p>
 
 </div>
@@ -106,7 +106,6 @@ import {
   setPersistence,
   browserLocalPersistence,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
@@ -161,19 +160,6 @@ window.loginUser = async function(){
     messageDiv.textContent = error.message;
     btn.disabled = false;
     btn.textContent = "Login";
-  }
-}
-
-window.resetPass = function(){
-  const email = prompt("Enter your email:");
-  if (email) {
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        alert("Password reset email sent!");
-      })
-      .catch(error => {
-        alert(error.message);
-      });
   }
 }
 
