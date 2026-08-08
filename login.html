@@ -103,9 +103,20 @@ Don't have an account?
 import { auth } from "./firebase.js";
 
 import {
+  setPersistence,
+  browserLocalPersistence,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+// Redirect if already signed in
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log('Already signed in, redirecting to dashboard');
+    window.location.replace('dashboard.html');
+  }
+});
 
 window.loginUser = async function(){
   
@@ -124,16 +135,17 @@ window.loginUser = async function(){
   btn.textContent = "Logging in...";
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await setPersistence(auth, browserLocalPersistence);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
     messageDiv.style.color = "green";
     messageDiv.textContent = "Login successful! Redirecting...";
     
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1500);
+    // redirect immediately
+    window.location.replace("dashboard.html");
 
   } catch (error) {
+    console.error('Login error:', error);
     messageDiv.style.color = "red";
     messageDiv.textContent = error.message;
     btn.disabled = false;
