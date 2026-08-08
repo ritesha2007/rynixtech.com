@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verify Email</title>
+  <style>
+    body{background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh}
+    .box{background:rgba(255,255,255,.05);padding:20px;border-radius:12px;text-align:center;width:320px}
+    button{background:#FFD700;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;margin:8px}
+    a{color:#FFD700}
+    #status{min-height:20px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Verify your email</h2>
+    <p>We've sent a verification link to your email. Open it and click the link, then return here.</p>
+    <p id="status" style="color:#ddd"></p>
+    <div>
+      <button id="resendBtn">Resend verification</button>
+      <button id="checkBtn">I verified — Continue</button>
+    </div>
+    <p style="margin-top:12px"><a href="login.html">Back to login</a></p>
+  </div>
+
+<script type="module">
+import { auth } from "./firebase.js";
+import { sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+const status = document.getElementById('status');
+
+document.getElementById('resendBtn').addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (!user) { status.style.color='red'; status.textContent='No signed-in user.'; return; }
+  try {
+    await sendEmailVerification(user);
+    status.style.color = 'green';
+    status.textContent = 'Verification email resent. Check inbox/spam.';
+  } catch (err) {
+    console.error(err);
+    status.style.color = 'red';
+    status.textContent = err.message || 'Failed to resend verification.';
+  }
+});
+
+document.getElementById('checkBtn').addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (!user) { status.style.color='red'; status.textContent='No signed-in user.'; return; }
+  try {
+    await user.reload();
+    if (user.emailVerified) {
+      status.style.color = 'green';
+      status.textContent = 'Email verified — redirecting...';
+      window.location.replace('dashboard.html');
+    } else {
+      status.style.color = 'orange';
+      status.textContent = 'Email not verified yet. Check your inbox.';
+    }
+  } catch (err) {
+    console.error(err);
+    status.style.color = 'red';
+    status.textContent = err.message || 'Error checking verification.';
+  }
+});
+</script>
+</body>
+</html>
